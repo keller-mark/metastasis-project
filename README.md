@@ -1,6 +1,6 @@
 # metastasis-prediction-by-ligand-receptor
 
-Goal: determine whether ligand-receptor interactions are predictive for prediction of metastasis destination organ or tissue type.
+Goal: determine whether ligand-receptor interactions are predictive for metastasis destination organ or tissue type.
 
 Ground truth:
 - for each cancer type, observed frequencies of each organ or tissue type as the metastasis destination
