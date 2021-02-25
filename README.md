@@ -46,7 +46,7 @@ Gupta and Massague Cell 2006
   - loss of cellular adhesion
   - increased motility and invasiveness
   - entry and survival in the circulation
-  - exist into new tissue
+  - exit into new tissue
   - colonization of distant site
   
 - highly metastatic clones from tumor have a higher rate of genetic mutability than nonmetastatic clones from the same tumor
@@ -127,7 +127,7 @@ Gupta and Massague Cell 2006
   - actomyosin contractile machinery
 
 - growth factor signaling can modulate motility regulators
-  - HGF and Met receptor
+  - HGF and Met receptor ([CellPhoneDB](https://www.cellphonedb.org/fast-query/ligands-from-receptor?species=HOMO_SAPIENS&receptor=HGF))
   - RhoC -> lung metastasis in mice
   - Nedd9 (focal adhesion kinase) adaptor protein
     - -> melanoma metastasis in mice
@@ -194,9 +194,58 @@ Gupta and Massague Cell 2006
         - exception: sarcomas (metastasis without lymph node evidence)
     - access to all organs besides lymph nodes is primarily through blood circulation
   
+- survival of circulating tumor cells
+  - co-opting of blood platelets (used as "shields")
+    - thrombosis and abundant fibrin deposition (observed in early-stage hematogenous metastasis in humans)
+    - tumor emboli -> greater metastatic potential than "naked" tumor cells
+      - resistant to clearance
+      - resistant to physical hemodynamic forces
+  - anoikis: the loss of adhesive supports
+    - may allow evasion of cell death
+    - brain-derived neurotrophic factor (BDNF) receptor trkB
+      - -> resistance to anoikis in vitro
+      - -> metastsis in rat intestinal epithelial cell line
 
-  
+- **adhesive interactions between cell-surface receptors in malignant cells and ligands expressed in target sites for metastasis**
+  - integrin receptors
+    - $\alpha 3 \beta 1$ integrins expressed on circulating tumor cells
+      - bind to laminin-5 in vascular basement membrane during lung metastasis ([CellPhoneDB](https://www.cellphonedb.org/fast-query/ligands-from-receptor?species=HOMO_SAPIENS&receptor=LAMA3))
+  - metadherin adhesion receptor
+    - expressed by metastatic breast cancer cells
+    - binds to unknown ligand expressed on lung-capillary endothelial cells
+  - chemokines and their receptors
+    - CXCR4 expression in breast cancer cells -> metastasis to CXCL12-rich tissues (lungs) ([CellPhoneDB](https://www.cellphonedb.org/fast-query/ligands-from-receptor?species=HOMO_SAPIENS&receptor=CXCR4))
+    
+
+- extravasation: exiting the endothelial vasculature into the target tissue
+  - growth may occur within the vasculature and "burst out" into the surrounding tissue
+  - ezrin (cytoskeletal anchoring protein) -> escape from vasculature in osteosarcoma cells
+    - ezrin repression -> higher rates of cancer cell death prior to lung metastasis
+  - cell signals which induce vascular permeability
+    - VEGF (vasculature permeability factor)
+      - VEGF -> Src kinases disrupt endothelial cell junctions
+      
+
+- patterns of colonization: organ distribution of metastasis from primary tumors
+  - seed-and-soil hypothesis (Paget 1889)
+    - circulating cancer cells (seeds) only colonize organ microenvironments (soils) compatible with their growth
+  - circulatory patterns alone provide a **partial** explanation for preferred sites of metastasis
+  - known patterns
+    - breast cancer -> lungs, bones, liver, brain
+      - no direct circulatory connection to breast tissue
+    - prostate cancer -> bone
+      - rarely lungs or liver
+    - uveal melanoma -> liver
+    - sarcomas -> lungs
+
+  - hematopoietic progenitor  hypothesis (Kaplan et al., 2005)
+    - circulation mobilizes hematopoietic progenitors from bone marrow
+    - hormonal factors emitted by primary tumors -> metastasis by hematopoietic progenitors
+    - molecular characterization of the recruited hematopoietic cells: expression of
+      - VEGFR1 ([CellPhoneDB](https://www.cellphonedb.org/fast-query/ligands-from-receptor?species=HOMO_SAPIENS&receptor=FLT1))
+        - VEGFR1 ligands may be required for premetastatic conditioning of target organ sites
+      - CD133
+      - CD34
+      - c-kit
     
   
-  
-    
