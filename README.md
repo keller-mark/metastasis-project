@@ -215,6 +215,12 @@ Gupta and Massague Cell 2006
     - binds to unknown ligand expressed on lung-capillary endothelial cells
   - chemokines and their receptors
     - CXCR4 expression in breast cancer cells -> metastasis to CXCL12-rich tissues (lungs) ([CellPhoneDB](https://www.cellphonedb.org/fast-query/ligands-from-receptor?species=HOMO_SAPIENS&receptor=CXCR4))
+  - other receptor-ligand combinations
+    - RANK (receptor) for osteoclast differentiation factor RANKL (ligand) in mammary epithelial cells
+      - predisposes breast cancer primary cells to bone metastasis
+    - Akt signaling -> hepatic (liver) metastasis in mouse models
+    - 
+    - 
     
 
 - extravasation: exiting the endothelial vasculature into the target tissue
@@ -233,10 +239,12 @@ Gupta and Massague Cell 2006
   - known patterns
     - breast cancer -> lungs, bones, liver, brain
       - no direct circulatory connection to breast tissue
+      - the main breast cancer subtypes (basal, "luminal A", etc.) do not typically inform about metastatic behavior (i.e. likelihood to relapse to a particular organ)
     - prostate cancer -> bone
       - rarely lungs or liver
     - uveal melanoma -> liver
     - sarcomas -> lungs
+  - in liver, hepatic sinusoids are highly porous to blood nutrients and circulating cells, unlike in lungs and brain (which have restrictive blood vessels)
 
   - hematopoietic progenitor  hypothesis (Kaplan et al., 2005)
     - circulation mobilizes hematopoietic progenitors from bone marrow

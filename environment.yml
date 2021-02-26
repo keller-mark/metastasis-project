@@ -1,0 +1,17 @@
+name: lr-env
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.8
+  - pandas
+  - numpy
+  - scipy
+  - anndata
+  - scanpy
+  - snakemake
+  - altair
+  - jupyterlab
+  - pip
+  - pip:
+    - daft

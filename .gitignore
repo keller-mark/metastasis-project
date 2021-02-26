@@ -1,0 +1,7 @@
+.snakemake/
+__MACOSX/
+data/
+.DS_Store
+__pycache__
+.vscode/
+.nova/
