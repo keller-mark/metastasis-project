@@ -256,6 +256,19 @@ Gupta and Massague Cell 2006
       - CD34
       - c-kit
 
+## Training data considerations
+- Binary ("multiple instance learning" problem)
+  - Do the cells come from a metastatic sample or a non-metastatic sample?
+- Leverage clonality (phylogenetic info)
+  - Identify "earliest" cell in metastasis (the "seed") based on its mutation burden
+  - Identify "negative" training examples at the primary tumor site
+    - primary tumor cells which did not or could not migrate to the metastasis site
+    - primary tumor cells which have ligand/receptor profiles most different from metastatic cells
+  - What type of experimental data is required?
+    - Dataset with both RNA-seq (for ligand-receptor co-expression) and DNA-seq (for somatic mutations)
+    - Dataset with single-cell RNA-seq only
+      - Work backwards from raw transcripts to identify somatic mutations, then construct phylogeny of cells
+  
 
 ## Resources
 
