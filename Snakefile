@@ -69,7 +69,6 @@ rule unzip_matrices:
     '''
     
 
-
 rule download_matrices:
   output:
     join(RAW_DIR, "tm", "matrices.zip")
