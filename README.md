@@ -270,6 +270,17 @@ Gupta and Massague Cell 2006
       - Work backwards from raw transcripts to identify somatic mutations, then construct phylogeny of cells
   
 
+## MetMap + Tabula Muris + CellPhoneDB
+- Compute ligand-receptor co-expression for each MetMap cell line
+  - Use CellPhoneDB to identify ligand-receptor pairs
+    - Map human genes to mouse homologs
+  - If too many ligand-receptor pairs, try:
+    - Cluster the ligand-receptor pairs based on their GO terms
+      - Want cluster for "adhesiveness", etc...
+    - Sum ligand-receptor interactions across clusters
+- Predict the metastatic potential for each cell line (probability of metastasis per target organ)
+
+
 ## Resources
 
 - [Tabula muris](https://tabula-muris.ds.czbiohub.org/): 20 organs and tissues from mouse
