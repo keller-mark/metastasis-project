@@ -1,12 +1,11 @@
-from anndata import AnnData
+from anndata import read_h5ad
 import scanpy as sc
 import numpy as np
 import pandas as pd
 from os.path import join
 
 
-  
-def convert_to_h5ad(X_df, ann_df, tissue):
+def sample_bulk(adata, tissue):
   obs_df = ann_df.loc[ann_df["tissue"] == tissue].set_index("cell")
     
   dummy_join_cols = X_df.columns.values.tolist()[0:1]
@@ -23,16 +22,9 @@ def convert_to_h5ad(X_df, ann_df, tissue):
   
 
 if __name__ == "__main__":
-  
-  X_df = pd.read_csv(snakemake.input['counts'], index_col=0).transpose()
-  ann_df = pd.read_csv(snakemake.input['annots'])
+  adata = read_h5ad(snakemake.input[0])
   tissue = snakemake.wildcards['tissue']
   
-  adata = convert_to_h5ad(X_df, ann_df, tissue)
+  adata = sample_bulk(adata, tissue)
   
   adata.write(snakemake.output[0])
-  
-  #sc.pl.embedding(adata, basis="X_tsne", color="cell_ontology_id")
-  
-  #sc.pl.dotplot(adata, marker_genes_dict, 'clusters', dendrogram=True)
-  

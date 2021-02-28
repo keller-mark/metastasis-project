@@ -2,6 +2,27 @@
 
 [PDF](https://github.com/keller-mark/lr/blob/gh-pages/main.pdf)
 
+## Set up environment
+
+```sh
+conda env create -f environment.yml
+conda activate lr-env
+```
+
+```R
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+    
+install.packages('Seurat')
+BiocManager::install("splatter")
+```
+
+## Run pipeline
+```sh
+snakemake -j 1
+```
+## Notes
+
 Goal: determine whether ligand-receptor interactions are predictive for metastasis destination organ or tissue type.
 
 Ground truth:
