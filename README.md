@@ -1,5 +1,7 @@
 # metastasis-prediction-by-ligand-receptor
 
+[PDF](https://github.com/keller-mark/lr/blob/gh-pages/main.pdf)
+
 Goal: determine whether ligand-receptor interactions are predictive for metastasis destination organ or tissue type.
 
 Ground truth:

@@ -9,7 +9,7 @@ dependencies:
   - scipy
   - anndata
   - scanpy
-  - snakemake
+  - snakemake>=6.0
   - altair
   - jupyterlab
   - pip
