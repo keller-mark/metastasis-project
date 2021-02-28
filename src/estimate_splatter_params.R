@@ -1,5 +1,4 @@
 # Reference: https://bioconductor.org/packages/devel/bioc/vignettes/splatter/inst/doc/splatter.html#5_Estimating_parameters
-# Reference: https://satijalab.org/seurat/archive/v3.1/conversion_vignette.html
 
 library(Seurat)
 library(splatter)

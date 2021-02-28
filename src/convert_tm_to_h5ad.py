@@ -32,6 +32,3 @@ if __name__ == "__main__":
   
   adata.write(snakemake.output[0])
   
-  #sc.pl.embedding(adata, basis="X_tsne", color="cell_ontology_id")
-  #sc.pl.dotplot(adata, marker_genes_dict, 'clusters', dendrogram=True)
-  

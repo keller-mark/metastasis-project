@@ -6,7 +6,11 @@ RAW_DIR = join(DATA_DIR, "raw")
 INTERMEDIATE_DIR = join(DATA_DIR, "intermediate")
 PROCESSED_DIR = join(DATA_DIR, "processed")
 
-# Tabula Muris URLs: https://figshare.com/projects/Tabula_Muris_Transcriptomic_characterization_of_20_organs_and_tissues_from_Mus_musculus_at_single_cell_resolution/27733
+TM_FACS_ZIP_URL = "https://ndownloader.figshare.com/files/10700143"
+TM_FACS_ANNOTATIONS_URL = "https://ndownloader.figshare.com/files/13088129"
+TM_FACS_METADATA_URL = "https://ndownloader.figshare.com/files/10842785"
+
+# Tabula Muris URLs: https://figshare.com/articles/dataset/Robject_files_for_tissues_processed_by_Seurat/5821263
 TM_FACS_SEURAT = {
  'Bladder': 'https://ndownloader.figshare.com/files/13091141',
  'Brain_Non-Myeloid': 'https://ndownloader.figshare.com/files/13091513',
@@ -43,7 +47,8 @@ METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
 rule all:
   input:
     expand(join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj"), tissue=TM_FACS_TISSUES),
-    expand(join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json"), tissue=TM_FACS_TISSUES),
+    #expand(join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json"), tissue=TM_FACS_TISSUES),
+    expand(join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"), tissue=TM_FACS_TISSUES),
     join(RAW_DIR, "cellphonedb", "gene_input.csv"),
     join(RAW_DIR, "cellphonedb", "protein_input.csv"),
     join(RAW_DIR, "cellphonedb", "protein_curated.csv"),
@@ -57,21 +62,22 @@ rule estimate_splatter_params:
   script:
     join("src", "estimate_splatter_params.R")
 
-rule convert_robj_to_h5ad:
-  input:
-    join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj")
-  output:
-    join(INTERMEDIATE_DIR, "tm", "anndata", "{tissue}.facs.h5ad")
-  script:
-    join("src", "convert_robj_to_h5ad.R")
-
 rule sample_bulk_from_tm_sc_by_tissue:
   input:
-    join(INTERMEDIATE_DIR, "tm", "anndata", "{tissue}.facs.h5ad")
+    join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad")
   output:
     join(INTERMEDIATE_DIR, "tm", "anndata", "{tissue}.bulk.h5ad")
   script:
     join("src", "sample_bulk_from_tm_sc_by_tissue.py")
+
+rule convert_tm_to_h5ad:
+  input:
+    counts=join(RAW_DIR, "tm", "FACS", "{tissue}-counts.csv"),
+    annots=join(RAW_DIR, "tm", "facs_annotations.csv")
+  output:
+    join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad")
+  script:
+    join("src", "convert_tm_to_h5ad.py")
 
 
 # Abstract parent rules
@@ -81,12 +87,44 @@ rule curl_download:
     curl -L -o {output} "{params.file_url}"
     '''
 
+rule unzip:
+  shell:
+    '''
+    unzip -o {input} -d {params.out_dir}
+    '''
+
 # Download Tabula Muris data
 use rule curl_download as download_tm_facs_robj with:
   output:
     join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj")
   params:
     file_url=(lambda w: TM_FACS_SEURAT[w.tissue])
+
+use rule curl_download as download_tm_facs_zip with:
+  output:
+    join(RAW_DIR, "tm", "facs_matrices.zip")
+  params:
+    file_url=TM_FACS_ZIP_URL
+
+use rule unzip as unzip_tm_facs_zip with:
+  input:
+    join(RAW_DIR, "tm", "facs_matrices.zip")
+  output:
+    expand(join(RAW_DIR, "tm", "FACS", "{tissue}-counts.csv"), tissue=TM_FACS_TISSUES)
+  params:
+    out_dir=join(RAW_DIR, "tm")
+
+use rule curl_download as download_tm_facs_annotations with:
+  output:
+    join(RAW_DIR, "tm", "facs_annotations.csv")
+  params:
+    file_url=TM_FACS_ANNOTATIONS_URL
+
+use rule curl_download as download_tm_facs_metadata with:
+  output:
+    join(RAW_DIR, "tm", "facs_metadata.csv")
+  params:
+    file_url=TM_FACS_METADATA_URL
 
 # Download CellPhoneDB data
 use rule curl_download as download_cellphonedb_gene_input with:
