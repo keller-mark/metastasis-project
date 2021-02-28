@@ -35,13 +35,20 @@ TM_TISSUES = [
 
 # CellPhoneDB URLs: https://www.cellphonedb.org/downloads
 CELLPHONEDB_GENE_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/gene_input.csv"
+CELLPHONEDB_PROTEIN_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/protein_input.csv"
 CELLPHONEDB_PROTEIN_CURATED_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/sources/protein_curated.csv"
+
+# MetMap URLs: https://depmap.org/metmap/data/index.html
+METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
 
 # Rules
 rule all:
   input:
     expand(join(RAW_DIR, "tm", "adata", "{tissue}.h5ad"), tissue=TM_TISSUES),
     join(RAW_DIR, "cellphonedb", "gene_input.csv"),
+    join(RAW_DIR, "cellphonedb", "protein_input.csv"),
+    join(RAW_DIR, "cellphonedb", "protein_curated.csv"),
+    join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx")
     
 
 rule convert_to_h5ad:
@@ -67,7 +74,7 @@ rule unzip_matrices:
     unzip -o {input} -d {params.out_dir}
     '''
 
-# Abstract rules
+# Abstract parent rules
 rule curl_download:
   shell:
     '''
@@ -93,9 +100,22 @@ use rule curl_download as download_cellphonedb_gene_input with:
     join(RAW_DIR, "cellphonedb", "gene_input.csv")
   params:
     file_url=CELLPHONEDB_GENE_INPUT_URL
+
+use rule curl_download as download_cellphonedb_protein_input with:
+  output:
+    join(RAW_DIR, "cellphonedb", "protein_input.csv")
+  params:
+    file_url=CELLPHONEDB_PROTEIN_INPUT_URL
   
 use rule curl_download as download_cellphonedb_protein_curated with:
   output:
     join(RAW_DIR, "cellphonedb", "protein_curated.csv")
   params:
     file_url=CELLPHONEDB_PROTEIN_CURATED_URL
+    
+# Download MetMap data
+use rule curl_download as download_metmap_500 with:
+  output:
+    join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx")
+  params:
+    file_url=METMAP_500_URL
