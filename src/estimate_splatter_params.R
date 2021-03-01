@@ -19,7 +19,7 @@ sparse_matrix <- slot(slot(tiss, "assays")[['RNA']], "counts")
 dense_matrix <- as.matrix(sparse_matrix)
 
 # Estimate parameters from data
-params <- splatEstimate(dense_matrix)
+params <- simpleEstimate(dense_matrix)
 
 params_list <- list()
 

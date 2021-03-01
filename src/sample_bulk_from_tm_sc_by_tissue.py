@@ -1,30 +1,36 @@
-from anndata import read_h5ad
+from anndata import read_h5ad, AnnData
 import scanpy as sc
 import numpy as np
 import pandas as pd
 from os.path import join
+import json
 
-
-def sample_bulk(adata, tissue):
-  obs_df = ann_df.loc[ann_df["tissue"] == tissue].set_index("cell")
-    
-  dummy_join_cols = X_df.columns.values.tolist()[0:1]
-  joined_obs_df = X_df[dummy_join_cols].join(obs_df).drop(columns=dummy_join_cols)
+def sample_bulk(adata, splatter):
   
-  tsne = joined_obs_df[['tissue_tSNE_1', 'tissue_tSNE_2']]
+  # The number of genes.
+  n_genes = splatter["nGenes"]
+  # The number of cells.
+  n_cells = splatter["nCells"]
+  # The shape parameter for the mean gamma distribution.
+  mean_shape = splatter["mean.shape"]
+  # The rate parameter for the mean gamma distribution.
+  mean_rate = splatter["mean.rate"]
+  # The dispersion parameter for the counts negative binomial distribution.
+  count_disp = splatter["count.disp"]
   
-  drop_cols = ["Neurog3>0_raw", "Neurog3>0_scaled", 'tissue_tSNE_1', 'tissue_tSNE_2']
-  joined_obs_df = joined_obs_df.drop(columns=drop_cols)
   
-  adata = AnnData(X=X_df, obs=joined_obs_df, obsm={ "X_tsne": tsne.values })
+  
+  X = adata.X
+  
   
   return adata
   
 
 if __name__ == "__main__":
-  adata = read_h5ad(snakemake.input[0])
-  tissue = snakemake.wildcards['tissue']
+  adata = read_h5ad(snakemake.input['adata'])
+  with open(snakemake.input['splatter']) as f:
+    splatter = json.load(f)
   
-  adata = sample_bulk(adata, tissue)
+  adata = sample_bulk(adata, splatter)
   
   adata.write(snakemake.output[0])

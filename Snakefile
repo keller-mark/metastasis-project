@@ -64,7 +64,8 @@ rule estimate_splatter_params:
 
 rule sample_bulk_from_tm_sc_by_tissue:
   input:
-    join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad")
+    adata=join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"),
+    splatter=join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json")
   output:
     join(INTERMEDIATE_DIR, "tm", "anndata", "{tissue}.bulk.h5ad")
   script:
