@@ -12,6 +12,11 @@ dependencies:
   - snakemake>=6.0
   - altair
   - jupyterlab
+  - networkx
+  - zarr
+  - numcodecs
   - pip
   - pip:
     - daft
+    - biomart
+    - obonet

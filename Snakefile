@@ -6,9 +6,6 @@ RAW_DIR = join(DATA_DIR, "raw")
 INTERMEDIATE_DIR = join(DATA_DIR, "intermediate")
 PROCESSED_DIR = join(DATA_DIR, "processed")
 
-TM_FACS_ZIP_URL = "https://ndownloader.figshare.com/files/10700143"
-TM_FACS_ANNOTATIONS_URL = "https://ndownloader.figshare.com/files/13088129"
-TM_FACS_METADATA_URL = "https://ndownloader.figshare.com/files/10842785"
 
 # Tabula Muris URLs: https://figshare.com/articles/dataset/Robject_files_for_tissues_processed_by_Seurat/5821263
 TM_FACS_SEURAT = {
@@ -43,42 +40,51 @@ CELLPHONEDB_PROTEIN_CURATED_URL = "https://raw.githubusercontent.com/Teichlab/ce
 # MetMap URLs: https://depmap.org/metmap/data/index.html
 METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
 
+# Cell and Gene Ontology URLs: http://www.obofoundry.org/ontology/cl.html
+CL_OBO_URL = "http://purl.obolibrary.org/obo/cl.obo"
+GO_OBO_URL = "http://purl.obolibrary.org/obo/go.obo"
+
 # Rules
 rule all:
   input:
-    expand(join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj"), tissue=TM_FACS_TISSUES),
-    expand(join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json"), tissue=TM_FACS_TISSUES),
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"), tissue=TM_FACS_TISSUES),
-    join(RAW_DIR, "cellphonedb", "gene_input.csv"),
-    join(RAW_DIR, "cellphonedb", "protein_input.csv"),
-    join(RAW_DIR, "cellphonedb", "protein_curated.csv"),
-    join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx")
+    expand(join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"), tissue=TM_FACS_TISSUES),
+    join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
+    join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
 
-rule estimate_splatter_params:
+
+rule cellphonedb_orthologs:
+  input:
+    orthologs=join(RAW_DIR, "ensembl", "human_mouse_orthologs.tsv"),
+    cpdb_gene_input=join(RAW_DIR, "cellphonedb", "gene_input.csv"),
+    cpdb_prot_input=join(RAW_DIR, "cellphonedb", "protein_input.csv"),
+    cpdb_prot_curated=join(RAW_DIR, "cellphonedb", "protein_curated.csv")
+  output:
+    join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
+  script:
+    join("src", "cellphonedb_orthologs.py")
+    
+rule download_orthologs:
+  output:
+    join(RAW_DIR, "ensembl", "human_mouse_orthologs.tsv")
+  script:
+    join("src", "download_orthologs.py")
+
+rule generate_pseudobulk:
   input:
     join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj")
   output:
-    join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json")
+    join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad")
   script:
-    join("src", "estimate_splatter_params.R")
+    join("src", "generate_pseudobulk.R")
 
-rule sample_bulk_from_tm_sc_by_tissue:
+rule convert_robj_to_h5ad:
   input:
-    adata=join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"),
-    splatter=join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json")
-  output:
-    join(INTERMEDIATE_DIR, "tm", "anndata", "{tissue}.bulk.h5ad")
-  script:
-    join("src", "sample_bulk_from_tm_sc_by_tissue.py")
-
-rule convert_tm_to_h5ad:
-  input:
-    counts=join(RAW_DIR, "tm", "FACS", "{tissue}-counts.csv"),
-    annots=join(RAW_DIR, "tm", "facs_annotations.csv")
+    join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj")
   output:
     join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad")
   script:
-    join("src", "convert_tm_to_h5ad.py")
+    join("src", "convert_robj_to_h5ad.R")
 
 
 # Abstract parent rules
@@ -100,32 +106,6 @@ use rule curl_download as download_tm_facs_robj with:
     join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj")
   params:
     file_url=(lambda w: TM_FACS_SEURAT[w.tissue])
-
-use rule curl_download as download_tm_facs_zip with:
-  output:
-    join(RAW_DIR, "tm", "facs_matrices.zip")
-  params:
-    file_url=TM_FACS_ZIP_URL
-
-use rule unzip as unzip_tm_facs_zip with:
-  input:
-    join(RAW_DIR, "tm", "facs_matrices.zip")
-  output:
-    expand(join(RAW_DIR, "tm", "FACS", "{tissue}-counts.csv"), tissue=TM_FACS_TISSUES)
-  params:
-    out_dir=join(RAW_DIR, "tm")
-
-use rule curl_download as download_tm_facs_annotations with:
-  output:
-    join(RAW_DIR, "tm", "facs_annotations.csv")
-  params:
-    file_url=TM_FACS_ANNOTATIONS_URL
-
-use rule curl_download as download_tm_facs_metadata with:
-  output:
-    join(RAW_DIR, "tm", "facs_metadata.csv")
-  params:
-    file_url=TM_FACS_METADATA_URL
 
 # Download CellPhoneDB data
 use rule curl_download as download_cellphonedb_gene_input with:
