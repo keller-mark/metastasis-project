@@ -36,6 +36,7 @@ TM_FACS_TISSUES = list(TM_FACS_SEURAT.keys())
 CELLPHONEDB_GENE_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/gene_input.csv"
 CELLPHONEDB_PROTEIN_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/protein_input.csv"
 CELLPHONEDB_PROTEIN_CURATED_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/sources/protein_curated.csv"
+CELLPHONEDB_INTERACTION_CURATED_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/sources/interaction_curated.csv"
 
 # MetMap URLs: https://depmap.org/metmap/data/index.html
 METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
@@ -57,8 +58,9 @@ rule cellphonedb_orthologs:
   input:
     orthologs=join(RAW_DIR, "ensembl", "human_mouse_orthologs.tsv"),
     cpdb_gene_input=join(RAW_DIR, "cellphonedb", "gene_input.csv"),
-    cpdb_prot_input=join(RAW_DIR, "cellphonedb", "protein_input.csv"),
-    cpdb_prot_curated=join(RAW_DIR, "cellphonedb", "protein_curated.csv")
+    cpdb_protein_input=join(RAW_DIR, "cellphonedb", "protein_input.csv"),
+    cpdb_protein_curated=join(RAW_DIR, "cellphonedb", "protein_curated.csv"),
+    cpdb_interaction_curated=join(RAW_DIR, "cellphonedb", "interaction_curated.csv")
   output:
     join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
   script:
@@ -125,6 +127,12 @@ use rule curl_download as download_cellphonedb_protein_curated with:
     join(RAW_DIR, "cellphonedb", "protein_curated.csv")
   params:
     file_url=CELLPHONEDB_PROTEIN_CURATED_URL
+
+use rule curl_download as download_cellphonedb_interaction_curated with:
+  output:
+    join(RAW_DIR, "cellphonedb", "interaction_curated.csv")
+  params:
+    file_url=CELLPHONEDB_INTERACTION_CURATED_URL
     
 # Download MetMap data
 use rule curl_download as download_metmap_500 with:
