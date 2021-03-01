@@ -10,12 +10,16 @@ conda activate lr-env
 ```
 
 ```R
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+install.packages("BiocManager")
+install.packages("devtools")
+install.packages('reticulate')
     
 install.packages('Seurat')
 install.packages('jsonlite')
 BiocManager::install("splatter")
+BiocManager::install(c("LoomExperiment", "SingleCellExperiment"))
+devtools::install_github("HelenaLC/muscat", ref = "master")
+devtools::install_github("cellgeni/sceasy")
 ```
 
 ## Run pipeline
