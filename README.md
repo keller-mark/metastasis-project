@@ -14,7 +14,6 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
     
 install.packages('Seurat')
-install.packages('SeuratDisk')
 install.packages('jsonlite')
 BiocManager::install("splatter")
 ```

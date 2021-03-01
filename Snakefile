@@ -47,7 +47,7 @@ METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
 rule all:
   input:
     expand(join(RAW_DIR, "tm", "seurat", "{tissue}.facs.Robj"), tissue=TM_FACS_TISSUES),
-    #expand(join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json"), tissue=TM_FACS_TISSUES),
+    expand(join(INTERMEDIATE_DIR, "tm", "splatter", "{tissue}.params.json"), tissue=TM_FACS_TISSUES),
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"), tissue=TM_FACS_TISSUES),
     join(RAW_DIR, "cellphonedb", "gene_input.csv"),
     join(RAW_DIR, "cellphonedb", "protein_input.csv"),
