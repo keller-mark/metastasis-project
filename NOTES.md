@@ -4,26 +4,16 @@
 Goal: determine whether ligand-receptor interactions are predictive for metastasis destination organ or tissue type.
 
 Ground truth:
-- for each cancer type, observed frequencies of each organ or tissue type as the metastasis destination
+- for each human cancer cell line, observed frequencies of each organ or tissue type as the metastasis destination (MetMap)
 
 Input data:
-- scRNA-seq data for each primary cancer type
-- scRNA-seq data for each healthy organ or tissue type
+- RNA-seq data for each primary cancer type
+- RNA-seq data for each healthy organ or tissue type
 - ligand-receptor pairs
-
-Pre-processing:
-- identify the immune/stromal cell types environment in each healthy organ
-- identify the ligand and receptor signals in the healthy immune cells
-- identify the ligand and receptor signals in the cancer samples
-
 
 Model inputs: for each ligand and receptor pair, abundance of RNA in cancer cells vs each healthy organ
 
-Model output: score for metastasis be localized to each healthy organ (highest score implies most likely for metastasis destination)
-
-Questions:
-- Could a graph embedding be used?
-  - Perhaps for each cancer type, build an input graph of ligand-receptor pairs (edges between pairs across organs, with weights for interaction strength), embed to map to a graph of cancer type to organ type with weights
+Model output: metastasis potential for a particular healthy organ or tissue type
 
 
 ## Metastatic potential
@@ -282,7 +272,7 @@ Gupta and Massague Cell 2006
 - Model the metastatic potential for each cell line (probability of metastasis per target organ)
 
 
-# Co-expression options
+## Co-expression options
 - After normalization of expression of samples `A` and `B` take the min(expression of `partner_a` in `A`, expression of `partner_b` in `B`)
     - Should the minimum be taken after normalization to expression level of a housekeeping gene shared across each (cancer cell line, tabula muris cell type) pair?
 - See methods section "Integrated coexpression analysis of high-resolution cell annotations across tissues" in [Single-cell meta-analysis of SARS-CoV-2 entry genes across tissues and demographics](https://doi.org/10.1038/s41591-020-01227-z)
