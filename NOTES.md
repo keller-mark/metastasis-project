@@ -282,3 +282,13 @@ Gupta and Massague Cell 2006
 - See [Langfelder and Horvath 2008](https://doi.org/10.1186/1471-2105-9-559) discussing correlation network analysis for co-expression across samples to find clusters of highly correlated genes
    - Perhaps find the clusters containing `partner_a` and `partner_b` in each sample and take their sum before taking the minimum?
 
+## Conversion of single-cell tabula muris data to "pseudobulk"
+- Is taking the sum (as done by `muscat`) the best way? How about the mean?
+- Should a sampling strategy be incorporated? How would cells and their transcripts need to be sampled?
+
+## Caveats
+- The mouse xenograft models may not reflect human biology
+  - Related: functions of mouse orthologs may be different than the human counterparts 
+- Injection of human cancer cell lines into mouse aorta may not be realistic despite facilitating circulation and therefore metastasis
+- Restricting to known ligand-receptor interactions documented in CellPhoneDB may introduce bias
+- Restricting to those ligand-receptor pairs for which both `partner_a` and `partner_b` have mouse orthologs may introduce bias
