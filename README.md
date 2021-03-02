@@ -335,3 +335,5 @@ Gupta and Massague Cell 2006
     - task: explore tabula muris to determine whether mouse bone marrow data seems to have this property as well
 
 - [MetMap downloads](https://depmap.org/metmap/data/index.html)
+- [Cancer cell line encyclopedia (CCLE)](https://portals.broadinstitute.org/ccle)
+- [CellPhoneDB](https://www.cellphonedb.org/)
