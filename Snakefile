@@ -32,6 +32,15 @@ TM_FACS_SEURAT = {
 }
 TM_FACS_TISSUES = list(TM_FACS_SEURAT.keys())
 
+TM_TO_METMAP = {
+  'Brain_Non-Myeloid': 'brain',
+  'Lung': 'lung',
+  'Liver': 'liver',
+  'Marrow': 'bone',
+  'Kidney': 'kidney'
+}
+METMAP_TISSUES = list(TM_TO_METMAP.keys())
+
 # CellPhoneDB URLs: https://www.cellphonedb.org/downloads
 CELLPHONEDB_GENE_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/gene_input.csv"
 CELLPHONEDB_PROTEIN_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/protein_input.csv"
@@ -40,6 +49,8 @@ CELLPHONEDB_INTERACTION_CURATED_URL = "https://raw.githubusercontent.com/Teichla
 
 # MetMap URLs: https://depmap.org/metmap/data/index.html
 METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
+METMAP_EXP_COUNTS_URL = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE148283&format=file&file=GSE148283%5Fall%2Ecount%2Ecsv%2Egz"
+METMAP_EXP_SAMPLES_URL = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE148283&format=file&file=GSE148283%5Fall%2Esample%2Ecsv%2Egz"
 
 # Cell and Gene Ontology URLs: http://www.obofoundry.org/ontology/cl.html
 CL_OBO_URL = "http://purl.obolibrary.org/obo/cl.obo"
@@ -50,7 +61,10 @@ rule all:
   input:
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"), tissue=TM_FACS_TISSUES),
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"), tissue=TM_FACS_TISSUES),
+    #expand(join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.tsv"), tissue=METMAP_TISSUES),
     join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
+    join(RAW_DIR, "metmap", "GSE148283_all.count.csv"),
+    join(RAW_DIR, "metmap", "GSE148283_all.sample.csv"),
     join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
 
 
@@ -102,6 +116,12 @@ rule unzip:
     unzip -o {input} -d {params.out_dir}
     '''
 
+rule gunzip:
+  shell:
+    '''
+    gunzip -c {input} > {output}
+    '''
+    
 # Download Tabula Muris data
 use rule curl_download as download_tm_facs_robj with:
   output:
@@ -140,3 +160,27 @@ use rule curl_download as download_metmap_500 with:
     join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx")
   params:
     file_url=METMAP_500_URL
+
+use rule gunzip as gunzip_metmap_counts with:
+  input:
+    join(RAW_DIR, "metmap", "GSE148283_all.count.csv.gz")
+  output:
+    join(RAW_DIR, "metmap", "GSE148283_all.count.csv")
+
+use rule gunzip as gunzip_metmap_samples with:
+  input:
+    join(RAW_DIR, "metmap", "GSE148283_all.sample.csv.gz")
+  output:
+    join(RAW_DIR, "metmap", "GSE148283_all.sample.csv")
+
+use rule curl_download as download_metmap_counts with:
+  output:
+    join(RAW_DIR, "metmap", "GSE148283_all.count.csv.gz")
+  params:
+    file_url=METMAP_EXP_COUNTS_URL
+
+use rule curl_download as download_metmap_samples with:
+  output:
+    join(RAW_DIR, "metmap", "GSE148283_all.sample.csv.gz")
+  params:
+    file_url=METMAP_EXP_SAMPLES_URL
