@@ -65,12 +65,28 @@ rule all:
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"), tissue=TM_FACS_TISSUES),
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"), tissue=TM_FACS_TISSUES),
     expand(join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.h5ad"), tissue=METMAP_TISSUES),
+    expand(join(PROCESSED_DIR, "models", "{tissue}.coefficients.tsv"), tissue=METMAP_TISSUES),
     join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
     join(RAW_DIR, "metmap", "GSE148283_all.count.csv"),
     join(RAW_DIR, "metmap", "GSE148283_all.sample.csv"),
     join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv"),
     join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.gct")
 
+
+# Use co-expression values to build a model of metastasis potential
+# for each MetMap target site.
+rule build_linear_model:
+  input:
+    tm_ccle_coexp=join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.h5ad"),
+    mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx")
+  params:
+    metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
+  output:
+    join(PROCESSED_DIR, "models", "{tissue}.coefficients.h5ad")
+  notebook:
+    join("src", "build_linear_model.py.ipynb")
+  #script:
+  #  join("src", "build_linear_model.py")
 
 # Compute co-expression of CellPhoneDB interaction genes between
 # each cancer cell line used in MetMap (expression from CCLE)

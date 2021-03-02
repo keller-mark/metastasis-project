@@ -17,6 +17,7 @@ dependencies:
   - numcodecs
   - xlrd
   - openpyxl
+  - scikit-learn
   - pip
   - pip:
     - daft
