@@ -1,5 +1,3 @@
-# metastasis-prediction
-
 Prediction of metastasis target site using ligand-receptor co-expression (human cancer cell lines in vitro and healthy organs in vivo)
 
 - How accurately can metastasis target sites be predicted given co-expression of ligands and receptors between human cancer cell lines and healthy mouse tissues?
