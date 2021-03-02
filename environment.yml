@@ -15,8 +15,11 @@ dependencies:
   - networkx
   - zarr
   - numcodecs
+  - xlrd
+  - openpyxl
   - pip
   - pip:
     - daft
     - biomart
     - obonet
+    - cmapPy

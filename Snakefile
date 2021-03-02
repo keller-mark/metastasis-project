@@ -52,6 +52,9 @@ METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
 METMAP_EXP_COUNTS_URL = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE148283&format=file&file=GSE148283%5Fall%2Ecount%2Ecsv%2Egz"
 METMAP_EXP_SAMPLES_URL = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE148283&format=file&file=GSE148283%5Fall%2Esample%2Ecsv%2Egz"
 
+# CCLE URLS: https://portals.broadinstitute.org/ccle/data
+CCLE_EXP_URL = "https://data.broadinstitute.org/ccle/CCLE_RNAseq_genes_counts_20180929.gct.gz"
+
 # Cell and Gene Ontology URLs: http://www.obofoundry.org/ontology/cl.html
 CL_OBO_URL = "http://purl.obolibrary.org/obo/cl.obo"
 GO_OBO_URL = "http://purl.obolibrary.org/obo/go.obo"
@@ -61,12 +64,32 @@ rule all:
   input:
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"), tissue=TM_FACS_TISSUES),
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"), tissue=TM_FACS_TISSUES),
-    #expand(join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.tsv"), tissue=METMAP_TISSUES),
+    expand(join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.tsv"), tissue=METMAP_TISSUES),
     join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
     join(RAW_DIR, "metmap", "GSE148283_all.count.csv"),
     join(RAW_DIR, "metmap", "GSE148283_all.sample.csv"),
-    join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
+    join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv"),
+    join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.gct")
 
+
+# Compute co-expression of CellPhoneDB interaction genes between
+# each cancer cell line used in MetMap (expression from CCLE)
+# and each healthy organ used in MetMap (expression from Tabula Muris)
+# where the genes are linked through human-mouse orthologs from Ensembl.
+rule compute_coexpression:
+  input:
+    tm_pseudobulk=join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"),
+    mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
+    ccle_exp=join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.gct"),
+    cpdb_orthologs=join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
+  params:
+    metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
+  output:
+    join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.tsv")
+  notebook:
+    join("src", "compute_coexpression.py.ipynb")
+  #script:
+  #  join("src", "compute_coexpression.py")
 
 rule cellphonedb_orthologs:
   input:
@@ -184,3 +207,16 @@ use rule curl_download as download_metmap_samples with:
     join(RAW_DIR, "metmap", "GSE148283_all.sample.csv.gz")
   params:
     file_url=METMAP_EXP_SAMPLES_URL
+    
+# Download CCLE data
+use rule gunzip as gunzip_ccle_exp with:
+  input:
+    join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.gct.gz")
+  output:
+    join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.gct")
+    
+use rule curl_download as download_ccle_exp with:
+  output:
+    join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.gct.gz")
+  params:
+    file_url=CCLE_EXP_URL
