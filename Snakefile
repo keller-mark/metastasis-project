@@ -64,7 +64,7 @@ rule all:
   input:
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.facs.h5ad"), tissue=TM_FACS_TISSUES),
     expand(join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"), tissue=TM_FACS_TISSUES),
-    expand(join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.tsv"), tissue=METMAP_TISSUES),
+    expand(join(INTERMEDIATE_DIR, "coexpression", "{tissue}.coexpression.h5ad"), tissue=METMAP_TISSUES),
     join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
     join(RAW_DIR, "metmap", "GSE148283_all.count.csv"),
     join(RAW_DIR, "metmap", "GSE148283_all.sample.csv"),

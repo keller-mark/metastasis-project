@@ -26,6 +26,13 @@ devtools::install_github("cellgeni/sceasy")
 ```sh
 snakemake -j 1
 ```
+
+## Edit notebook in pipeline
+
+```sh
+snakemake -j 1 --edit-notebook data/intermediate/coexpression/Kidney.coexpression.h5ad
+```
+
 ## Notes
 
 Goal: determine whether ligand-receptor interactions are predictive for metastasis destination organ or tissue type.
