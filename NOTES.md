@@ -261,7 +261,7 @@ Gupta and Massague Cell 2006
       - Work backwards from raw transcripts to identify somatic mutations, then construct phylogeny of cells
   
 
-## MetMap + Tabula Muris + CellPhoneDB
+## MetMap + CCLE + Tabula Muris + CellPhoneDB
 - Compute ligand-receptor co-expression for each MetMap cell line
   - Use CellPhoneDB to identify ligand-receptor pairs
     - Map human genes to mouse homologs
@@ -290,5 +290,6 @@ Gupta and Massague Cell 2006
 - The mouse xenograft models may not reflect human biology
   - Related: functions of mouse orthologs may be different than the human counterparts 
 - Injection of human cancer cell lines into mouse aorta may not be realistic despite facilitating circulation and therefore metastasis
+  - Related: competition arising from the pooled cell line injection method may bias the results, as noted in the MetMap paper
 - Restricting to known ligand-receptor interactions documented in CellPhoneDB may introduce bias
 - Restricting to those ligand-receptor pairs for which both `partner_a` and `partner_b` have mouse orthologs may introduce bias
