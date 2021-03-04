@@ -1,0 +1,14 @@
+params:
+  models:
+    - 'LinearRegression'
+    - 'RandomForestRegressor'
+  expression_scales:
+    - 'linear'
+    - 'log'
+    - 'binary'
+  interaction_sources:
+    - 'CellPhoneDB'
+  interaction_models:
+    - 'basic'
+  
+  
