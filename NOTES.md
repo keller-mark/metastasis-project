@@ -272,16 +272,6 @@ Gupta and Massague Cell 2006
 - Model the metastatic potential for each cell line (probability of metastasis per target organ)
 
 
-## Co-expression options
-- After normalization of expression of samples `A` and `B` take the min(expression of `partner_a` in `A`, expression of `partner_b` in `B`)
-    - Should the minimum be taken after normalization to expression level of a housekeeping gene shared across each (cancer cell line, tabula muris cell type) pair?
-- See methods section "Integrated coexpression analysis of high-resolution cell annotations across tissues" in [Single-cell meta-analysis of SARS-CoV-2 entry genes across tissues and demographics](https://doi.org/10.1038/s41591-020-01227-z)
-    "After the harmonization of cell-type annotations, ACE2-TMPRSS2 and ACE2-CTSL expression were assessed using a logistic mixed-effect model: $ Y_i ~ ACE2 + (1|sample_id) $
-    where $Y_i$ was the binarized expression level of either TMPRSS2 or CTSL, and covariates were binarized ACE2 expression in cell $i$ and a sample-level random intercept."
-- See [Li and Li 2021](https://doi.org/10.1101/2020.09.19.304956), but this seems focused on co-expression in the same single-cell RNA-seq sample
-- See [Langfelder and Horvath 2008](https://doi.org/10.1186/1471-2105-9-559) discussing correlation network analysis for co-expression across samples to find clusters of highly correlated genes
-   - Perhaps find the clusters containing `partner_a` and `partner_b` in each sample and take their sum before taking the minimum?
-
 ## Conversion of single-cell tabula muris data to "pseudobulk"
 - Is taking the sum (as done by `muscat`) the best way? How about the mean?
 - Should a sampling strategy be incorporated? How would cells and their transcripts need to be sampled?
