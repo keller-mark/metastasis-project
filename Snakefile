@@ -11,7 +11,6 @@ PARAMS = config["params"]
 
 DATA_DIR = "data"
 RAW_DIR = join(DATA_DIR, "raw")
-INTERMEDIATE_DIR = join(DATA_DIR, "intermediate")
 PROCESSED_DIR = join(DATA_DIR, "processed")
 
 
@@ -77,22 +76,21 @@ rule all:
       expression_scale=PARAMS["expression_scales"],
       interaction_source=PARAMS["interaction_sources"],
       interaction_model=PARAMS["interaction_models"]
-    )
+    ),
+    join(PROCESSED_DIR, "plots", "gene_orthologs.png")
 
 
 # Use co-expression values to build a model of metastasis potential
 # for each MetMap target site.
 rule build_model:
   input:
-    join(INTERMEDIATE_DIR, "coexpression", "{tissue}.{expression_scale}.coexpression.h5ad"),
+    join(PROCESSED_DIR, "coexpression", "{tissue}.{expression_scale}.coexpression.h5ad"),
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
     join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.model.h5ad")
   notebook:
     join("src", "build_model.py.ipynb")
-  #script:
-  #  join("src", "build_linear_model.py")
 
 # Compute co-expression of CellPhoneDB interaction genes between
 # each cancer cell line used in MetMap (expression from CCLE)
@@ -103,15 +101,13 @@ rule compute_coexpression:
     tm_pseudobulk=join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"),
     mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
     ccle_exp=join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.h5ad"),
-    cpdb_orthologs=join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
+    cpdb_orthologs=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv")
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
-    join(INTERMEDIATE_DIR, "coexpression", "{tissue}.{expression_scale}.coexpression.h5ad")
+    join(PROCESSED_DIR, "coexpression", "{tissue}.{expression_scale}.coexpression.h5ad")
   notebook:
     join("src", "compute_coexpression.py.ipynb")
-  #script:
-  #  join("src", "compute_coexpression.py")
 
 rule cellphonedb_orthologs:
   input:
@@ -121,9 +117,12 @@ rule cellphonedb_orthologs:
     cpdb_protein_curated=join(RAW_DIR, "cellphonedb", "protein_curated.csv"),
     cpdb_interaction_curated=join(RAW_DIR, "cellphonedb", "interaction_curated.csv")
   output:
-    join(INTERMEDIATE_DIR, "cellphonedb", "gene_orthologs.tsv")
-  script:
-    join("src", "cellphonedb_orthologs.py")
+    table=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv"),
+    plot=join(PROCESSED_DIR, "plots", "gene_orthologs.png")
+  notebook:
+    join("src", "cellphonedb_orthologs.py.ipynb")
+
+
 
 rule convert_gct_to_h5ad:
   input:

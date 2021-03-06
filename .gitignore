@@ -10,3 +10,4 @@ figures/
 .Rproj.user
 *.Rproj
 .Rhistory
+geckodriver.log

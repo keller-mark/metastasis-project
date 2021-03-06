@@ -4,13 +4,14 @@ channels:
   - bioconda
 dependencies:
   - python>=3.8
+  - snakemake>=6.0
   - pandas
   - numpy
   - scipy
   - anndata
   - scanpy
-  - snakemake>=6.0
   - altair
+  - altair_saver
   - jupyterlab
   - networkx
   - zarr
@@ -24,3 +25,4 @@ dependencies:
     - biomart
     - obonet
     - cmapPy
+    - UpSetPlot
