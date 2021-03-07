@@ -6,6 +6,10 @@ params:
     - 'linear'
     - 'log'
     - 'binary'
+  complex_expression_aggregation:
+    - 'min'
+    - 'mean' # todo
+    - 'sum' # todo
   interaction_sources:
     - 'CellPhoneDB'
   interaction_models:
