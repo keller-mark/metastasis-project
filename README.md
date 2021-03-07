@@ -13,14 +13,9 @@ conda activate lr-env
 ```
 
 ```R
-install.packages("BiocManager")
-install.packages("devtools")
-install.packages("reticulate")
-install.packages("Seurat")
-install.packages("jsonlite")
-BiocManager::install("splatter")
+install.packages(c("BiocManager", "devtools", "reticulate", "Seurat", "jsonlite"))
 BiocManager::install(c("LoomExperiment", "SingleCellExperiment"))
-devtools::install_github("HelenaLC/muscat", ref = "master")
+devtools::install_github("HelenaLC/muscat")
 devtools::install_github("cellgeni/sceasy")
 ```
 
