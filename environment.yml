@@ -19,6 +19,7 @@ dependencies:
   - xlrd
   - openpyxl
   - scikit-learn
+  - xeus-python
   - pip
   - pip:
     - daft

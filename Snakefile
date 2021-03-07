@@ -51,8 +51,8 @@ METMAP_TISSUES = list(TM_TO_METMAP.keys())
 # CellPhoneDB URLs: https://www.cellphonedb.org/downloads
 CELLPHONEDB_GENE_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/gene_input.csv"
 CELLPHONEDB_PROTEIN_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/protein_input.csv"
-CELLPHONEDB_PROTEIN_CURATED_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/sources/protein_curated.csv"
-CELLPHONEDB_INTERACTION_CURATED_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/sources/interaction_curated.csv"
+CELLPHONEDB_COMPLEX_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/complex_input.csv"
+CELLPHONEDB_INTERACTION_INPUT_URL = "https://raw.githubusercontent.com/Teichlab/cellphonedb-data/master/data/interaction_input.csv"
 
 # MetMap URLs: https://depmap.org/metmap/data/index.html
 METMAP_500_URL = "https://ndownloader.figshare.com/files/24009293"
@@ -77,7 +77,8 @@ rule all:
       interaction_source=PARAMS["interaction_sources"],
       interaction_model=PARAMS["interaction_models"]
     ),
-    join(PROCESSED_DIR, "plots", "gene_orthologs.png")
+    join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
+    join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf")
 
 
 # Use co-expression values to build a model of metastasis potential
@@ -114,11 +115,12 @@ rule cellphonedb_orthologs:
     orthologs=join(RAW_DIR, "ensembl", "human_mouse_orthologs.tsv"),
     cpdb_gene_input=join(RAW_DIR, "cellphonedb", "gene_input.csv"),
     cpdb_protein_input=join(RAW_DIR, "cellphonedb", "protein_input.csv"),
-    cpdb_protein_curated=join(RAW_DIR, "cellphonedb", "protein_curated.csv"),
-    cpdb_interaction_curated=join(RAW_DIR, "cellphonedb", "interaction_curated.csv")
+    cpdb_complex_input=join(RAW_DIR, "cellphonedb", "complex_input.csv"),
+    cpdb_interaction_input=join(RAW_DIR, "cellphonedb", "interaction_input.csv")
   output:
     table=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv"),
-    plot=join(PROCESSED_DIR, "plots", "gene_orthologs.png")
+    ortholog_plot=join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
+    interaction_plot=join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf")
   notebook:
     join("src", "cellphonedb_orthologs.py.ipynb")
 
@@ -194,17 +196,17 @@ use rule curl_download as download_cellphonedb_protein_input with:
   params:
     file_url=CELLPHONEDB_PROTEIN_INPUT_URL
   
-use rule curl_download as download_cellphonedb_protein_curated with:
+use rule curl_download as download_cellphonedb_complex_input with:
   output:
-    join(RAW_DIR, "cellphonedb", "protein_curated.csv")
+    join(RAW_DIR, "cellphonedb", "complex_input.csv")
   params:
-    file_url=CELLPHONEDB_PROTEIN_CURATED_URL
+    file_url=CELLPHONEDB_COMPLEX_INPUT_URL
 
-use rule curl_download as download_cellphonedb_interaction_curated with:
+use rule curl_download as download_cellphonedb_interaction_input with:
   output:
-    join(RAW_DIR, "cellphonedb", "interaction_curated.csv")
+    join(RAW_DIR, "cellphonedb", "interaction_input.csv")
   params:
-    file_url=CELLPHONEDB_INTERACTION_CURATED_URL
+    file_url=CELLPHONEDB_INTERACTION_INPUT_URL
     
 # Download MetMap data
 use rule curl_download as download_metmap_500 with:
