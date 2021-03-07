@@ -5,7 +5,7 @@ params:
   expression_scales:
     - 'linear'
     - 'log'
-    - 'binary'
+    #- 'binary'
   complex_expression_aggregation:
     - 'min'
     - 'mean' # todo

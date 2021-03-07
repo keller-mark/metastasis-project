@@ -77,6 +77,14 @@ rule all:
       interaction_source=PARAMS["interaction_sources"],
       interaction_model=PARAMS["interaction_models"]
     ),
+    expand(
+      join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.mse_plot.pdf"),
+      tissue=METMAP_TISSUES,
+      model=PARAMS["models"],
+      expression_scale=PARAMS["expression_scales"],
+      interaction_source=PARAMS["interaction_sources"],
+      interaction_model=PARAMS["interaction_models"]
+    ),
     join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
     join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf")
 
@@ -89,7 +97,9 @@ rule build_model:
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
-    join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.model.h5ad")
+    model=join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.model.h5ad"),
+    mse_plot=join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.mse_plot.pdf"),
+    prediction_plot=join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.prediction_plot.pdf")
   notebook:
     join("src", "build_model.py.ipynb")
 
