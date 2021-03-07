@@ -4,7 +4,6 @@ Prediction of metastasis target site using ligand-receptor co-expression (human 
   - Can a "lower bound" be placed on the seed-and-soil hypothesis (Paget 1889)?
     - Obviously, there are many other factors to consider besides the ligand-receptor interactions between circulating cancer cells and healthy tissues. If a more complex model is able to take into account factors such as age, physical forces, vasculature (blood and lymphatic), metabolic differences, etc. how much does each factor improve prediction accuracy?
 
-[PDF](https://github.com/keller-mark/lr/blob/gh-pages/main.pdf), [notes](./NOTES.md)
 
 ## Set up environment
 
