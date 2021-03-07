@@ -102,7 +102,7 @@ rule compute_coexpression:
     tm_pseudobulk=join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"),
     mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
     ccle_exp=join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.h5ad"),
-    cpdb_orthologs=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv")
+    interactions=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv")
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
