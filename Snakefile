@@ -66,40 +66,47 @@ CCLE_EXP_URL = "https://data.broadinstitute.org/ccle/CCLE_RNAseq_genes_counts_20
 CL_OBO_URL = "http://purl.obolibrary.org/obo/cl.obo"
 GO_OBO_URL = "http://purl.obolibrary.org/obo/go.obo"
 
+# Abbreviations
+# - iea: interaction_expression_aggregation (how to combine expression for partners A and B of an interaction)
+# - cea: complex_expression_aggregation (how to aggregate expression for complexes which contain multiple gene products)
+
 # Rules
 rule all:
   input:
     expand(
-      join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.model.h5ad"),
+      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.model.h5ad"),
       tissue=METMAP_TISSUES,
       model=PARAMS["models"],
       expression_scale=PARAMS["expression_scales"],
       interaction_source=PARAMS["interaction_sources"],
-      interaction_model=PARAMS["interaction_models"]
+      cea=PARAMS["complex_expression_aggregation"],
+      iea=PARAMS["interaction_expression_aggregation"],
     ),
     expand(
-      join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.mse_plot.pdf"),
+      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.mse_plot.pdf"),
       tissue=METMAP_TISSUES,
       model=PARAMS["models"],
       expression_scale=PARAMS["expression_scales"],
       interaction_source=PARAMS["interaction_sources"],
-      interaction_model=PARAMS["interaction_models"]
+      cea=PARAMS["complex_expression_aggregation"],
+      iea=PARAMS["interaction_expression_aggregation"],
     ),
     join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
-    join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf")
+    join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf"),
+    join(PROCESSED_DIR, "metmap", "pca.pdf")
 
 
 # Use co-expression values to build a model of metastasis potential
 # for each MetMap target site.
 rule build_model:
   input:
-    join(PROCESSED_DIR, "coexpression", "{tissue}.{expression_scale}.coexpression.h5ad"),
+    join(PROCESSED_DIR, "coexpression", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression.h5ad"),
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
-    model=join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.model.h5ad"),
-    mse_plot=join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.mse_plot.pdf"),
-    prediction_plot=join(PROCESSED_DIR, "{tissue}", "{model}.{expression_scale}.{interaction_source}.{interaction_model}.prediction_plot.pdf")
+    model=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.model.h5ad"),
+    mse_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.mse_plot.pdf"),
+    prediction_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.prediction_plot.pdf")
   notebook:
     join("src", "build_model.py.ipynb")
 
@@ -110,13 +117,14 @@ rule build_model:
 rule compute_coexpression:
   input:
     tm_pseudobulk=join(RAW_DIR, "tm", "anndata", "{tissue}.pseudobulk.h5ad"),
+    cl_obo=join(RAW_DIR, "ontologies", "cl.obo"),
     mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
     ccle_exp=join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.h5ad"),
     interactions=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv")
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
-    join(PROCESSED_DIR, "coexpression", "{tissue}.{expression_scale}.coexpression.h5ad")
+    join(PROCESSED_DIR, "coexpression", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression.h5ad")
   notebook:
     join("src", "compute_coexpression.py.ipynb")
 
@@ -134,7 +142,13 @@ rule cellphonedb_orthologs:
   notebook:
     join("src", "cellphonedb_orthologs.py.ipynb")
 
-
+rule metmap_pca:
+  input:
+    mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx")
+  output:
+    pca_plot=join(PROCESSED_DIR, "metmap", "pca.pdf")
+  notebook:
+    join("src", "metmap_pca.py.ipynb")
 
 rule convert_gct_to_h5ad:
   input:
@@ -261,3 +275,16 @@ use rule curl_download as download_ccle_exp with:
     join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.gct.gz")
   params:
     file_url=CCLE_EXP_URL
+
+# Download ontology files
+use rule curl_download as download_cl_obo with:
+  output:
+    join(RAW_DIR, "ontologies", "cl.obo")
+  params:
+    file_url=CL_OBO_URL
+  
+use rule curl_download as download_go_obo with:
+  output:
+    join(RAW_DIR, "ontologies", "go.obo")
+  params:
+    file_url=GO_OBO_URL

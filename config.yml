@@ -4,15 +4,11 @@ params:
     - 'RandomForestRegressor'
   expression_scales:
     - 'linear'
-    - 'log'
-    #- 'binary'
   complex_expression_aggregation:
-    - 'min'
-    - 'mean' # todo
-    - 'sum' # todo
+    - 'product' # mass action kinetics
+  interaction_expression_aggregation:
+    - 'product' # mass action kinetics
   interaction_sources:
     - 'CellPhoneDB'
-  interaction_models:
-    - 'basic'
   
   
