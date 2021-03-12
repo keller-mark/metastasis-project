@@ -2,13 +2,18 @@ params:
   models:
     - 'LinearRegression'
     - 'RandomForestRegressor'
+    - 'PLSRegression'
   expression_scales:
     - 'linear'
   complex_expression_aggregation:
-    - 'product' # mass action kinetics
+    - 'min'
   interaction_expression_aggregation:
     - 'product' # mass action kinetics
   interaction_sources:
     - 'CellPhoneDB'
-  
+  pseudobulk_function:
+    - 'sum'
+  feature_inclusion_criteria:
+    - 'all'
+    - 'top5'
   

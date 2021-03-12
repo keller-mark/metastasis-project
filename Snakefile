@@ -69,6 +69,7 @@ GO_OBO_URL = "http://purl.obolibrary.org/obo/go.obo"
 # Abbreviations
 # - iea: interaction_expression_aggregation (how to combine expression for partners A and B of an interaction)
 # - cea: complex_expression_aggregation (how to aggregate expression for complexes which contain multiple gene products)
+# - fic: feature_inclusion_criteria (which features to include when building the model)
 
 # Rules
 rule all:
@@ -80,7 +81,7 @@ rule all:
       expression_scale=PARAMS["expression_scales"],
       interaction_source=PARAMS["interaction_sources"],
       cea=PARAMS["complex_expression_aggregation"],
-      iea=PARAMS["interaction_expression_aggregation"],
+      iea=PARAMS["interaction_expression_aggregation"]
     ),
     expand(
       join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.mse_plot.pdf"),
@@ -91,9 +92,17 @@ rule all:
       cea=PARAMS["complex_expression_aggregation"],
       iea=PARAMS["interaction_expression_aggregation"],
     ),
+    expand(
+      join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_top_5.html"),
+      tissue=METMAP_TISSUES,
+      expression_scale=PARAMS["expression_scales"],
+      interaction_source=PARAMS["interaction_sources"],
+      cea=PARAMS["complex_expression_aggregation"],
+      iea=PARAMS["interaction_expression_aggregation"],
+    ),
     join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
     join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf"),
-    join(PROCESSED_DIR, "metmap", "pca.pdf")
+    join(PROCESSED_DIR, "plots", "metmap_pca_1.pdf")
 
 
 # Use co-expression values to build a model of metastasis potential
@@ -109,6 +118,18 @@ rule build_model:
     prediction_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.prediction_plot.pdf")
   notebook:
     join("src", "build_model.py.ipynb")
+    
+# Plot top co-expression values for each (cancer cell line, tabula muris cell type) pair.
+rule plot_top_coexpression:
+  input:
+    coexpression=join(PROCESSED_DIR, "coexpression", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression.h5ad"),
+    interactions=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv")
+  params:
+    tissues=METMAP_TISSUES
+  output:
+    join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_top_5.html")
+  notebook:
+    join("src", "plot_top_coexpression.py.ipynb")
 
 # Compute co-expression of CellPhoneDB interaction genes between
 # each cancer cell line used in MetMap (expression from CCLE)
@@ -146,7 +167,10 @@ rule metmap_pca:
   input:
     mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx")
   output:
-    pca_plot=join(PROCESSED_DIR, "metmap", "pca.pdf")
+    pca_plot_1=join(PROCESSED_DIR, "plots", "metmap_pca_1.pdf"),
+    pca_plot_2=join(PROCESSED_DIR, "plots", "metmap_pca_2.pdf"),
+    pca_plot_3=join(PROCESSED_DIR, "plots", "metmap_pca_3.pdf"),
+    pca_plot_4=join(PROCESSED_DIR, "plots", "metmap_pca_4.pdf") # todo: PCA of overall metastasis potential vs. organ-specific metastasis potential
   notebook:
     join("src", "metmap_pca.py.ipynb")
 
