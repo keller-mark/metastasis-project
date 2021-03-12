@@ -75,22 +75,24 @@ GO_OBO_URL = "http://purl.obolibrary.org/obo/go.obo"
 rule all:
   input:
     expand(
-      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.model.h5ad"),
-      tissue=METMAP_TISSUES,
-      model=PARAMS["models"],
-      expression_scale=PARAMS["expression_scales"],
-      interaction_source=PARAMS["interaction_sources"],
-      cea=PARAMS["complex_expression_aggregation"],
-      iea=PARAMS["interaction_expression_aggregation"]
-    ),
-    expand(
-      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.mse_plot.pdf"),
+      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.model.h5ad"),
       tissue=METMAP_TISSUES,
       model=PARAMS["models"],
       expression_scale=PARAMS["expression_scales"],
       interaction_source=PARAMS["interaction_sources"],
       cea=PARAMS["complex_expression_aggregation"],
       iea=PARAMS["interaction_expression_aggregation"],
+      fic=PARAMS["feature_inclusion_criteria"]
+    ),
+    expand(
+      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.mse_plot.pdf"),
+      tissue=METMAP_TISSUES,
+      model=PARAMS["models"],
+      expression_scale=PARAMS["expression_scales"],
+      interaction_source=PARAMS["interaction_sources"],
+      cea=PARAMS["complex_expression_aggregation"],
+      iea=PARAMS["interaction_expression_aggregation"],
+      fic=PARAMS["feature_inclusion_criteria"]
     ),
     expand(
       join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_top_5.html"),
@@ -113,9 +115,9 @@ rule build_model:
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
-    model=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.model.h5ad"),
-    mse_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.mse_plot.pdf"),
-    prediction_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.prediction_plot.pdf")
+    model=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.model.h5ad"),
+    mse_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.mse_plot.pdf"),
+    prediction_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.prediction_plot.pdf")
   notebook:
     join("src", "build_model.py.ipynb")
     
@@ -170,7 +172,7 @@ rule metmap_pca:
     pca_plot_1=join(PROCESSED_DIR, "plots", "metmap_pca_1.pdf"),
     pca_plot_2=join(PROCESSED_DIR, "plots", "metmap_pca_2.pdf"),
     pca_plot_3=join(PROCESSED_DIR, "plots", "metmap_pca_3.pdf"),
-    pca_plot_4=join(PROCESSED_DIR, "plots", "metmap_pca_4.pdf") # todo: PCA of overall metastasis potential vs. organ-specific metastasis potential
+    pca_plot_4=join(PROCESSED_DIR, "plots", "metmap_pca_4.pdf")
   notebook:
     join("src", "metmap_pca.py.ipynb")
 
