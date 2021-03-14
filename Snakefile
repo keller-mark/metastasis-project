@@ -104,7 +104,7 @@ rule all:
     ),
     join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
     join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf"),
-    join(PROCESSED_DIR, "plots", "metmap_pca_1.pdf")
+    join(PROCESSED_DIR, "plots", "metmap_pca_6.pdf")
 
 
 # Use co-expression values to build a model of metastasis potential
@@ -172,7 +172,9 @@ rule metmap_pca:
     pca_plot_1=join(PROCESSED_DIR, "plots", "metmap_pca_1.pdf"),
     pca_plot_2=join(PROCESSED_DIR, "plots", "metmap_pca_2.pdf"),
     pca_plot_3=join(PROCESSED_DIR, "plots", "metmap_pca_3.pdf"),
-    pca_plot_4=join(PROCESSED_DIR, "plots", "metmap_pca_4.pdf")
+    pca_plot_4=join(PROCESSED_DIR, "plots", "metmap_pca_4.pdf"),
+    pca_plot_5=join(PROCESSED_DIR, "plots", "metmap_pca_5.pdf"),
+    pca_plot_6=join(PROCESSED_DIR, "plots", "metmap_pca_6.pdf")
   notebook:
     join("src", "metmap_pca.py.ipynb")
 
