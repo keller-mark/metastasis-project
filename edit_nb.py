@@ -18,13 +18,19 @@ def write_stdout(proc):
 if __name__ == "__main__":
   
   parser = argparse.ArgumentParser(description="Edit a snakemake notebook for the first output file of a particular rule.")
-  parser.add_argument("-r", "--rule", required=True, help="The name of the rule.")
+  parser.add_argument("-r", "--rule", required=False, help="The name of the rule.")
+  parser.add_argument("-s", "--suffix", required=False, help="The suffix for an output file.")
   args = parser.parse_args()
   
-  summary = subprocess.run("snakemake --filegraph | dot -Txdot_json", shell=True, capture_output=True)
+  summary = subprocess.run("snakemake --summary", shell=True, capture_output=True)
   df = pd.read_csv(io.StringIO(summary.stdout.decode("utf-8")), sep='\t')
-
-  rule_df = df.loc[df["rule"] == args.rule].reset_index(drop=True)
+  
+  if args.rule is not None:
+    rule_df = df.loc[df["rule"] == args.rule].reset_index(drop=True)
+  elif args.suffix is not None:
+    rule_df = df.loc[df["output_file"].str.endswith(args.suffix)]
+  else:
+    raise ValueError("Provide the --rule or --suffix argument.")
 
   if rule_df.shape[0] > 0:
     row = rule_df.iloc[0]
@@ -37,12 +43,9 @@ if __name__ == "__main__":
       try:
         os.killpg(os.getpgid(proc.pid), signal.SIGINT)
         write_stdout(proc)
-        time.sleep(2)
-        os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
       except ProcessLookupError:
         pass
     atexit.register(cleanup)
     write_stdout(proc)
   else:
-    print(df)
-    print("No output files found for the specified rule.")
+    print("No output files were found for the specified rule or suffix.")
