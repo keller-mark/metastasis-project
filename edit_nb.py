@@ -10,10 +10,23 @@ import atexit
 import signal
 import time
 
+def try_open_notebook(stdout_str):
+  if "Or copy and paste one of these URLs:" in stdout_str:
+    url_i = stdout_str.index("Or copy and paste one of these URLs:")
+    if(len(stdout_str) == url_i + 122):
+      url = stdout_str[url_i+45:url_i+122]
+      subprocess.run(f"open {url}", shell=True)
+      
+      # TODO: run ls on .snakemake/scripts, get name of most recently created file, and open directly to {url}/lab/tree/{most_recent_notebook_file}
+
 def write_stdout(proc):
+  s = ""
   for c in iter(lambda: proc.stdout.read(1), b''): 
     sys.stdout.buffer.write(c)
     sys.stdout.flush()
+    
+    s += c.decode("utf-8")
+    try_open_notebook(s)
 
 if __name__ == "__main__":
   
