@@ -2,7 +2,7 @@ params:
   models:
     - 'LinearRegression'
     - 'RandomForestRegressor'
-    #- 'PLSRegression'
+    - 'PLSRegression'
   expression_scales:
     - 'linear'
   complex_expression_aggregation:
@@ -16,4 +16,3 @@ params:
   feature_inclusion_criteria:
     - 'all'
     - 'top5'
-  

@@ -19,7 +19,9 @@ dependencies:
   - xlrd
   - openpyxl
   - scikit-learn
-  - xeus-python
+  - lxml
+  - cssselect
+  - requests
   - pip
   - pip:
     - daft

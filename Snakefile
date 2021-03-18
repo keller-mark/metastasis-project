@@ -5,7 +5,7 @@ configfile: "config.yml"
 
 assert("params" in config.keys())
 
-print(config["params"])
+#print(config["params"])
 
 PARAMS = config["params"]
 
@@ -102,6 +102,14 @@ rule all:
       cea=PARAMS["complex_expression_aggregation"],
       iea=PARAMS["interaction_expression_aggregation"],
     ),
+    expand(
+      join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_variance.pdf"),
+      tissue=METMAP_TISSUES,
+      expression_scale=PARAMS["expression_scales"],
+      interaction_source=PARAMS["interaction_sources"],
+      cea=PARAMS["complex_expression_aggregation"],
+      iea=PARAMS["interaction_expression_aggregation"],
+    ),
     join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
     join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf"),
     join(PROCESSED_DIR, "plots", "metmap_pca_6.pdf")
@@ -120,6 +128,20 @@ rule build_model:
     prediction_plot=join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.prediction_plot.pdf")
   notebook:
     join("src", "build_model.py.ipynb")
+  
+# Plot distribution of Gini coefficients across interaction coexpression values for each cancer cell line, for each tissue.
+rule plot_coexpression_variation:
+  input:
+    coexpression=join(PROCESSED_DIR, "coexpression", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression.h5ad"),
+    interactions=join(PROCESSED_DIR, "cellphonedb", "gene_orthologs.tsv")
+  params:
+    tissues=METMAP_TISSUES
+  output:
+    gini=join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_gini.pdf"),
+    entropy=join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_entropy.pdf"),
+    variance=join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_variance.pdf"),
+  notebook:
+    join("src", "plot_coexpression_variation.py.ipynb")
     
 # Plot top co-expression values for each (cancer cell line, tabula muris cell type) pair.
 rule plot_top_coexpression:

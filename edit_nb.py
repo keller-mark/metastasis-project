@@ -9,15 +9,24 @@ import sys
 import atexit
 import signal
 import time
+from os.path import join
 
 def try_open_notebook(stdout_str):
   if "Or copy and paste one of these URLs:" in stdout_str:
     url_i = stdout_str.index("Or copy and paste one of these URLs:")
     if(len(stdout_str) == url_i + 122):
       url = stdout_str[url_i+45:url_i+122]
-      subprocess.run(f"open {url}", shell=True)
       
-      # TODO: run ls on .snakemake/scripts, get name of most recently created file, and open directly to {url}/lab/tree/{most_recent_notebook_file}
+      # Get the name of most recently created file, and open directly to that notebook in JupyterLab.
+      notebook_files = [ f for f in os.listdir(join(".snakemake", "scripts")) if f.endswith(".py.ipynb") ]
+      
+      if len(notebook_files) > 0:
+        notebook_files = sorted(notebook_files, key=lambda f: os.path.getmtime(join(".snakemake", "scripts", f)), reverse=True)
+        most_recent_notebook_file = notebook_files[0]
+        url_path = f"/lab/tree/{most_recent_notebook_file}?token="
+        url = url.replace("/?token=", url_path)
+      
+      subprocess.run(f"open {url}", shell=True)
 
 def write_stdout(proc):
   s = ""
