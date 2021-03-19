@@ -10,11 +10,13 @@ Prediction of metastasis target site using ligand-receptor co-expression (human 
 ```sh
 conda env create -f environment.yml
 conda activate lr-env
+
+pyensembl install --release 100 --species homo_sapiens
 ```
 
 ```R
 install.packages(c("BiocManager", "devtools", "reticulate", "Seurat", "jsonlite"))
-BiocManager::install(c("LoomExperiment", "SingleCellExperiment"))
+BiocManager::install(c("LoomExperiment", "SingleCellExperiment", "DESeq2"))
 devtools::install_github("HelenaLC/muscat")
 devtools::install_github("cellgeni/sceasy")
 ```
@@ -28,6 +30,8 @@ snakemake -j 1
 ## Edit a notebook in the pipeline
 
 ```sh
+./edit_nb.py -s coexpression.h5ad
+# or
 snakemake -j 1 --edit-notebook data/intermediate/coexpression/Kidney.coexpression.h5ad
 ```
 

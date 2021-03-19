@@ -33,9 +33,11 @@ def write_stdout(proc):
   for c in iter(lambda: proc.stdout.read(1), b''): 
     sys.stdout.buffer.write(c)
     sys.stdout.flush()
-    
-    s += c.decode("utf-8")
-    try_open_notebook(s)
+    try:
+      s += c.decode("utf-8")
+      try_open_notebook(s)
+    except UnicodeDecodeError:
+      pass
 
 if __name__ == "__main__":
   

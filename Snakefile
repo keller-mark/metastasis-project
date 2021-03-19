@@ -112,8 +112,46 @@ rule all:
     ),
     join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
     join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf"),
-    join(PROCESSED_DIR, "plots", "metmap_pca_6.pdf")
+    join(PROCESSED_DIR, "plots", "metmap_pca_6.pdf"),
+    expand(
+      join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.pdf"),
+      tissue=METMAP_TISSUES,
+    ),
+    
+    
+# Run differential expression and gene set enrichment methods
+# on non-metastatic vs. metastatic samples for each target organ type.
+rule nonmetastatic_comparison:
+  input:
+    deseq=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.results.csv"),
+  params:
+    metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
+  output:
+    plot=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.pdf"),
+  notebook:
+    join("src", "nonmetastatic_comparison.py.ipynb")
 
+rule nonmetastatic_deseq:
+  input:
+    counts=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.counts.csv"),
+    conditions=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.conditions.csv"),
+  output:
+    join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.results.csv"),
+  script:
+    join("src", "nonmetastatic_deseq.R")
+
+# https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#countmat
+rule nonmetastatic_deseq_preparation:
+  input:
+    mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
+    ccle_exp=join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.h5ad"),
+  params:
+    metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
+  output:
+    counts=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.counts.csv"),
+    conditions=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.conditions.csv"),
+  notebook:
+    join("src", "nonmetastatic_deseq_preparation.py.ipynb")
 
 # Use co-expression values to build a model of metastasis potential
 # for each MetMap target site.
