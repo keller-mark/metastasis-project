@@ -114,7 +114,7 @@ rule all:
     join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf"),
     join(PROCESSED_DIR, "plots", "metmap_pca_6.pdf"),
     expand(
-      join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.pdf"),
+      join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.plot.pdf"),
       tissue=METMAP_TISSUES,
     ),
     
@@ -127,7 +127,9 @@ rule nonmetastatic_comparison:
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
-    plot=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.pdf"),
+    deseq_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.pdf"),
+    enrichr=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.tsv"),
+    enrichr_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.plot.pdf")
   notebook:
     join("src", "nonmetastatic_comparison.py.ipynb")
 
