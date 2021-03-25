@@ -18,11 +18,7 @@ rule all:
 # on non-metastatic vs. metastatic samples for each target organ type.
 rule kfold_deseq_model:
   input:
-    expand(
-      join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.deseq.results.csv"),
-      fold=range(NUM_FOLDS),
-      tissue=METMAP_TISSUES,
-    ),
+    deseq=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.deseq.results.csv"),
     kfold_indices=join(PROCESSED_DIR, "kfold_deseq", "kfold_indices.csv"),
     mm_potential=join(RAW_DIR, "metmap", "metmap_500_met_potential.xlsx"),
     ccle_exp=join(RAW_DIR, "ccle", "CCLE_RNAseq_genes_counts_20180929.h5ad")
@@ -30,7 +26,8 @@ rule kfold_deseq_model:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP
   output:
-    join(PROCESSED_DIR, "kfold_deseq", "model.plot.pdf"),
+    model_plot=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.model.pdf"),
+    model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.model.json"),
   notebook:
     join("src", "kfold_deseq_model.py.ipynb")
 
