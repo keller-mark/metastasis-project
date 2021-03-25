@@ -11,3 +11,4 @@ figures/
 *.Rproj
 .Rhistory
 geckodriver.log
+.RData

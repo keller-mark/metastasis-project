@@ -38,7 +38,7 @@ rule kfold_deseq_model:
 # Plot differential expression results for each fold and tissue type
 rule kfold_deseq_plot:
   input:
-    join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.deseq.results.csv")
+    deseq=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.deseq.results.csv")
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue]),
   output:
