@@ -16,46 +16,7 @@ PARAMS = config["params"]
 rule all:
   input:
     expand(
-      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.model.h5ad"),
-      tissue=METMAP_TISSUES,
-      model=PARAMS["models"],
-      expression_scale=PARAMS["expression_scales"],
-      interaction_source=PARAMS["interaction_sources"],
-      cea=PARAMS["complex_expression_aggregation"],
-      iea=PARAMS["interaction_expression_aggregation"],
-      fic=PARAMS["feature_inclusion_criteria"]
-    ),
-    expand(
-      join(PROCESSED_DIR, "models", "{model}.{expression_scale}.{interaction_source}.{cea}.{iea}.{fic}.{tissue}.mse_plot.pdf"),
-      tissue=METMAP_TISSUES,
-      model=PARAMS["models"],
-      expression_scale=PARAMS["expression_scales"],
-      interaction_source=PARAMS["interaction_sources"],
-      cea=PARAMS["complex_expression_aggregation"],
-      iea=PARAMS["interaction_expression_aggregation"],
-      fic=PARAMS["feature_inclusion_criteria"]
-    ),
-    expand(
-      join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_top_5.html"),
-      tissue=METMAP_TISSUES,
-      expression_scale=PARAMS["expression_scales"],
-      interaction_source=PARAMS["interaction_sources"],
-      cea=PARAMS["complex_expression_aggregation"],
-      iea=PARAMS["interaction_expression_aggregation"],
-    ),
-    expand(
-      join(PROCESSED_DIR, "plots", "{expression_scale}.{interaction_source}.{cea}.{iea}.{tissue}.coexpression_variance.pdf"),
-      tissue=METMAP_TISSUES,
-      expression_scale=PARAMS["expression_scales"],
-      interaction_source=PARAMS["interaction_sources"],
-      cea=PARAMS["complex_expression_aggregation"],
-      iea=PARAMS["interaction_expression_aggregation"],
-    ),
-    join(PROCESSED_DIR, "plots", "ensembl_orthologs.pdf"),
-    join(PROCESSED_DIR, "plots", "cellphonedb_interactions.pdf"),
-    join(PROCESSED_DIR, "plots", "metmap_pca_6.pdf"),
-    expand(
-      join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.plot.pdf"),
+      join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.pos_plot.pdf"),
       tissue=METMAP_TISSUES,
     ),
     
@@ -69,7 +30,9 @@ rule nonmetastatic_comparison:
   output:
     deseq_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.pdf"),
     enrichr=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.tsv"),
-    enrichr_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.plot.pdf")
+    enrichr_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.plot.pdf"),
+    enrichr_pos_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.pos_plot.pdf"),
+    enrichr_neg_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.neg_plot.pdf")
   notebook:
     join("src", "nonmetastatic_comparison.py.ipynb")
 
