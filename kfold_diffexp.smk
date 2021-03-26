@@ -28,7 +28,7 @@ rule kfold_deseq_model:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP,
   output:
-    model_plot=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.pdf"),
+    #model_plot=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.pdf"),
     model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
   notebook:
     join("src", "kfold_deseq_model.py.ipynb")
