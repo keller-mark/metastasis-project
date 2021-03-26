@@ -1,7 +1,14 @@
+import os
+import platform
 from os.path import join
 from urllib.parse import quote_plus
 
-DATA_DIR = "data"
+O2_USER = "mk596"
+# Check if this is running on O2
+IS_O2 = (platform.system() == "Linux" and O2_USER != None)
+
+# Directory / file constants
+DATA_DIR = ("data" if not IS_O2 else join(os.sep, "n", "scratch3", "users", O2_USER[0], O2_USER, "lr", "data"))
 RAW_DIR = join(DATA_DIR, "raw")
 PROCESSED_DIR = join(DATA_DIR, "processed")
 
