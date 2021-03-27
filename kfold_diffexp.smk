@@ -8,10 +8,11 @@ NUM_FOLDS = 5
 
 rule all:
   input:
-    expand(
-      join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
-      fold=range(NUM_FOLDS),
-    )
+    join(PROCESSED_DIR, "kfold_deseq", "0.deseq.model.json")
+    #expand(
+    #  join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
+    #  fold=range(NUM_FOLDS),
+    #)
 
 # Build a PLSRegression model for each fold, using the union of significantly
 # differentially expressed genes across tissue types (discovered in the training set).
