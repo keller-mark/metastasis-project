@@ -8,15 +8,29 @@ NUM_FOLDS = 5
 
 rule all:
   input:
-    join(PROCESSED_DIR, "kfold_deseq", "0.deseq.model.json")
+    join(PROCESSED_DIR, "kfold_deseq", "0.deseq.model.X_train.mtx")
     #expand(
     #  join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
     #  fold=range(NUM_FOLDS),
     #)
 
+# Run the model using octave.
+rule kfold_deseq_model:
+  input:
+    X_train=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.X_train.mtx"),
+    Y_train=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.Y_train.mtx"),
+    X_test=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.X_test.mtx"),
+    Y_test=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.Y_test.mtx"),
+  output:
+    model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
+  shell:
+    """
+    
+    """
+
 # Build a PLSRegression model for each fold, using the union of significantly
 # differentially expressed genes across tissue types (discovered in the training set).
-rule kfold_deseq_model:
+rule kfold_deseq_model_preparation:
   input:
     deseq=expand(
       join(PROCESSED_DIR, "kfold_deseq", "{{fold}}.{tissue}.deseq.results.csv"),
@@ -29,10 +43,12 @@ rule kfold_deseq_model:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP,
   output:
-    #model_plot=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.pdf"),
-    model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
+    X_train=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.X_train.mtx"),
+    Y_train=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.Y_train.mtx"),
+    X_test=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.X_test.mtx"),
+    Y_test=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.Y_test.mtx"),
   notebook:
-    join("src", "kfold_deseq_model.py.ipynb")
+    join("src", "kfold_deseq_model_preparation.py.ipynb")
 
 
 # Plot differential expression results for each fold and tissue type.
