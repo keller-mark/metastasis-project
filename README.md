@@ -15,7 +15,7 @@ pyensembl install --release 100 --species homo_sapiens
 ```
 
 ```R
-install.packages(c("BiocManager", "devtools", "reticulate", "Seurat", "jsonlite"))
+install.packages(c("BiocManager", "devtools", "reticulate", "Seurat", "jsonlite", "pheatmap", "viridis"))
 BiocManager::install(c("LoomExperiment", "SingleCellExperiment", "DESeq2"))
 devtools::install_github("HelenaLC/muscat")
 devtools::install_github("cellgeni/sceasy")

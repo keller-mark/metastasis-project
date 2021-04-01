@@ -42,11 +42,12 @@ def write_stdout(proc):
 if __name__ == "__main__":
   
   parser = argparse.ArgumentParser(description="Edit a snakemake notebook for the first output file of a particular rule.")
+  parser.add_argument("-f", "--snakefile", required=True, help="The name of the snakefile.")
   parser.add_argument("-r", "--rule", required=False, help="The name of the rule.")
   parser.add_argument("-s", "--suffix", required=False, help="The suffix for an output file.")
   args = parser.parse_args()
   
-  summary = subprocess.run("snakemake --summary", shell=True, capture_output=True)
+  summary = subprocess.run(f"snakemake --snakefile {args.snakefile} --summary", shell=True, capture_output=True)
   df = pd.read_csv(io.StringIO(summary.stdout.decode("utf-8")), sep='\t')
   
   if args.rule is not None:
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     row = rule_df.iloc[0]
     output_file = row["output_file"]
     proc = subprocess.Popen(
-      f"snakemake -j 1 --edit-notebook {output_file}",
+      f"snakemake --snakefile {args.snakefile} -j 1 --edit-notebook {output_file}",
       shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=os.setsid
     )
     def cleanup():

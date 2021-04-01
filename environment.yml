@@ -23,6 +23,7 @@ dependencies:
   - cssselect
   - requests
   - adjusttext
+  - biopython
   - pip
   - pip:
     - daft
