@@ -8,11 +8,26 @@ NUM_FOLDS = 5
 
 rule all:
   input:
-    join(PROCESSED_DIR, "kfold_deseq", "0.deseq.model.json")
-    #expand(
-    #  join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
-    #  fold=range(NUM_FOLDS),
-    #)
+    join(PROCESSED_DIR, "kfold_deseq", "deseq.model.performance.pdf"),
+    expand(
+      join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.heatmap.plot.pdf"),
+      fold=range(NUM_FOLDS),
+      tissue=METMAP_TISSUES,
+    )
+
+rule kfold_deseq_model_plot:
+  input:
+    expand(
+      join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
+      fold=range(NUM_FOLDS),
+    )
+  params:
+    metmap_tissues=METMAP_TISSUES,
+    tm_to_metmap=TM_TO_METMAP,
+  output:
+    plot=join(PROCESSED_DIR, "kfold_deseq", "deseq.model.performance.pdf"),
+  notebook:
+    join("src", "kfold_deseq_model_plot.py.ipynb")
 
 # Build a PLSRegression model for each fold, using the union of significantly
 # differentially expressed genes across tissue types (discovered in the training set).
@@ -29,12 +44,22 @@ rule kfold_deseq_model:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP,
   output:
-    #model_plot=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.pdf"),
     model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
   notebook:
     join("src", "kfold_deseq_model.py.ipynb")
 
-
+rule kfold_deseq_heatmap:
+  input:
+    counts=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.deseq.counts.csv"),
+    conditions=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.deseq.conditions.csv"),
+    deseq=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.deseq.results.csv")
+  params:
+    metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue]),
+  output:
+    heatmap_plot=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.heatmap.plot.pdf")
+  notebook:
+    join("src", "kfold_deseq_heatmap.py.ipynb")
+    
 # Plot differential expression results for each fold and tissue type.
 rule kfold_deseq_plot:
   input:
