@@ -65,6 +65,10 @@ CCLE_EXP_URL = "https://data.broadinstitute.org/ccle/CCLE_RNAseq_genes_counts_20
 CL_OBO_URL = "http://purl.obolibrary.org/obo/cl.obo"
 GO_OBO_URL = "http://purl.obolibrary.org/obo/go.obo"
 
+# Lists of genes per KEGG pathway: https://maayanlab.cloud/Enrichr/#stats
+KEGG_HUMAN_URL = "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Human"
+KEGG_MOUSE_URL = "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Mouse"
+
 
 rule convert_gct_to_h5ad:
   input:
@@ -189,3 +193,16 @@ use rule curl_download as download_go_obo with:
     join(RAW_DIR, "ontologies", "go.obo")
   params:
     file_url=GO_OBO_URL
+    
+# Download KEGG pathway lists of genes
+use rule curl_download as download_kegg_human_genes with:
+  output:
+    join(RAW_DIR, "kegg", "KEGG_2019_Human.tsv")
+  params:
+    file_url=KEGG_HUMAN_URL
+
+use rule curl_download as download_kegg_mouse_genes with:
+  output:
+    join(RAW_DIR, "kegg", "KEGG_2019_Mouse.tsv")
+  params:
+    file_url=KEGG_MOUSE_URL

@@ -3,12 +3,30 @@ include: "downloads.smk"
 
 NUM_FOLDS = 5
 
+DESEQ_FC_THRESHOLD = [
+  2
+]
+
+NUM_PCS = [
+  5
+]
+
+GEXP_TRANSFORMS = [
+  "tpm",
+  "log1p_tpm"
+]
+
 # Want to do 5-fold cross validation to obtain differentially expressed genes and pathways
 # in each fold, then train model with the data in the fold and predict on the held-out fold
 
 rule all:
   input:
-    join(PROCESSED_DIR, "kfold_deseq", "deseq.model.performance.pdf"),
+    expand(
+      join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.performance.pdf"),
+      num_pc=NUM_PCS,
+      gexp_transform=GEXP_TRANSFORMS,
+      fc_threshold=DESEQ_FC_THRESHOLD
+    ),
     expand(
       join(PROCESSED_DIR, "kfold_deseq", "{fold}.{tissue}.heatmap.plot.pdf"),
       fold=range(NUM_FOLDS),
@@ -18,14 +36,14 @@ rule all:
 rule kfold_deseq_model_plot:
   input:
     expand(
-      join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
+      join(PROCESSED_DIR, "kfold_deseq", "{fold}.{{num_pc}}.{{gexp_transform}}.{{fc_threshold}}.deseq.model.json"),
       fold=range(NUM_FOLDS),
     )
   params:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP,
   output:
-    plot=join(PROCESSED_DIR, "kfold_deseq", "deseq.model.performance.pdf"),
+    plot=join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.performance.pdf"),
   notebook:
     join("src", "kfold_deseq_model_plot.py.ipynb")
 
@@ -44,7 +62,7 @@ rule kfold_deseq_model:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP,
   output:
-    model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.deseq.model.json"),
+    model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.json"),
   notebook:
     join("src", "kfold_deseq_model.py.ipynb")
 
