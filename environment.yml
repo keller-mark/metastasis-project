@@ -24,6 +24,7 @@ dependencies:
   - requests
   - adjusttext
   - biopython
+  - gseapy
   - pip
   - pip:
     - daft

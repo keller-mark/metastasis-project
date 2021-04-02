@@ -16,7 +16,7 @@ PARAMS = config["params"]
 rule all:
   input:
     expand(
-      join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.pos_plot.pdf"),
+      join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.pos.tsv"),
       tissue=METMAP_TISSUES,
     ),
     
@@ -32,7 +32,11 @@ rule nonmetastatic_comparison:
     enrichr=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.tsv"),
     enrichr_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.plot.pdf"),
     enrichr_pos_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.pos_plot.pdf"),
-    enrichr_neg_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.neg_plot.pdf")
+    enrichr_neg_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.neg_plot.pdf"),
+    gsea_pos=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.pos.tsv"),
+    gsea_neg=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.neg.tsv"),
+    gsea_pos_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.pos_plot.pdf"),
+    gsea_neg_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.neg_plot.pdf"),
   notebook:
     join("src", "nonmetastatic_comparison.py.ipynb")
 
