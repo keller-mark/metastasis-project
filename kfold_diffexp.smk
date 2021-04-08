@@ -22,7 +22,13 @@ GEXP_TRANSFORMS = [
 rule all:
   input:
     expand(
-      join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.performance.pdf"),
+      join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.test_performance.pdf"),
+      num_pc=NUM_PCS,
+      gexp_transform=GEXP_TRANSFORMS,
+      fc_threshold=DESEQ_FC_THRESHOLD
+    ),
+    expand(
+      join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.train_performance.pdf"),
       num_pc=NUM_PCS,
       gexp_transform=GEXP_TRANSFORMS,
       fc_threshold=DESEQ_FC_THRESHOLD
@@ -33,17 +39,33 @@ rule all:
       tissue=METMAP_TISSUES,
     )
 
-rule kfold_deseq_model_plot:
+rule kfold_deseq_model_test_plot:
   input:
     expand(
-      join(PROCESSED_DIR, "kfold_deseq", "{fold}.{{num_pc}}.{{gexp_transform}}.{{fc_threshold}}.deseq.model.json"),
+      join(PROCESSED_DIR, "kfold_deseq", "{fold}.{{num_pc}}.{{gexp_transform}}.{{fc_threshold}}.deseq.model.test_pred.json"),
       fold=range(NUM_FOLDS),
     )
   params:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP,
+    test_or_train="test",
   output:
-    plot=join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.performance.pdf"),
+    plot=join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.test_performance.pdf"),
+  notebook:
+    join("src", "kfold_deseq_model_plot.py.ipynb")
+
+rule kfold_deseq_model_train_plot:
+  input:
+    expand(
+      join(PROCESSED_DIR, "kfold_deseq", "{fold}.{{num_pc}}.{{gexp_transform}}.{{fc_threshold}}.deseq.model.train_pred.json"),
+      fold=range(NUM_FOLDS),
+    )
+  params:
+    metmap_tissues=METMAP_TISSUES,
+    tm_to_metmap=TM_TO_METMAP,
+    test_or_train="train",
+  output:
+    plot=join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.train_performance.pdf"),
   notebook:
     join("src", "kfold_deseq_model_plot.py.ipynb")
 
@@ -62,7 +84,8 @@ rule kfold_deseq_model:
     metmap_tissues=METMAP_TISSUES,
     tm_to_metmap=TM_TO_METMAP,
   output:
-    model_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.json"),
+    model_test_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.test_pred.json"),
+    model_train_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.train_pred.json"),
   notebook:
     join("src", "kfold_deseq_model.py.ipynb")
 
