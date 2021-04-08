@@ -16,7 +16,7 @@ PARAMS = config["params"]
 rule all:
   input:
     expand(
-      join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.pos_plot.pdf"),
+      join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.pos_plot.pdf"),
       tissue=METMAP_TISSUES,
     ),
     
@@ -28,13 +28,29 @@ rule nonmetastatic_comparison:
   params:
     metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue])
   output:
-    deseq_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.pdf"),
+    deseq_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.plot.png"),
     enrichr=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.tsv"),
     enrichr_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.plot.pdf"),
     enrichr_pos_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.pos_plot.pdf"),
-    enrichr_neg_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.neg_plot.pdf")
+    enrichr_neg_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.enrichr.neg_plot.pdf"),
+    gsea_pos=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.pos.tsv"),
+    gsea_neg=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.neg.tsv"),
+    gsea_pos_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.pos_plot.pdf"),
+    gsea_neg_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.gsea.neg_plot.pdf"),
   notebook:
     join("src", "nonmetastatic_comparison.py.ipynb")
+
+rule nonmetastatic_deseq_heatmap:
+  input:
+    counts=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.counts.csv"),
+    conditions=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.conditions.csv"),
+    deseq=join(PROCESSED_DIR, "nonmet", "{tissue}.deseq.results.csv")
+  params:
+    metmap_tissue=(lambda w: TM_TO_METMAP[w.tissue]),
+  output:
+    heatmap_plot=join(PROCESSED_DIR, "nonmet", "{tissue}.heatmap.plot.pdf")
+  notebook:
+    join("src", "nonmetastatic_deseq_heatmap.py.ipynb")
 
 rule nonmetastatic_deseq:
   input:
