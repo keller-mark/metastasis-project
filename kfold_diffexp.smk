@@ -22,6 +22,13 @@ GEXP_TRANSFORMS = [
 rule all:
   input:
     expand(
+      join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.nn_confusion.pdf"),
+      fold=range(NUM_FOLDS),
+      num_pc=NUM_PCS,
+      gexp_transform=GEXP_TRANSFORMS,
+      fc_threshold=DESEQ_FC_THRESHOLD
+    ),
+    expand(
       join(PROCESSED_DIR, "kfold_deseq", "{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.test_performance.pdf"),
       num_pc=NUM_PCS,
       gexp_transform=GEXP_TRANSFORMS,
@@ -86,6 +93,9 @@ rule kfold_deseq_model:
   output:
     model_test_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.test_pred.json"),
     model_train_results=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.train_pred.json"),
+    nn_accuracy=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.nn_accuracy.pdf"),
+    nn_loss=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.nn_loss.pdf"),
+    nn_confusion=join(PROCESSED_DIR, "kfold_deseq", "{fold}.{num_pc}.{gexp_transform}.{fc_threshold}.deseq.model.nn_confusion.pdf")
   notebook:
     join("src", "kfold_deseq_model.py.ipynb")
 
